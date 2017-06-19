@@ -1,0 +1,9 @@
+Package: com.dgh0st.switchercontrols
+Name: SwitcherControls
+Depends: mobilesubstrate, preferenceloader, applist
+Version: 1.0
+Architecture: iphoneos-arm
+Description: MultiCenter for iOS 10.
+Maintainer: DGh0st <deeppwnage@yahoo.com>
+Author: DGh0st <deeppwnage@yahoo.com>
+Section: Tweaks
