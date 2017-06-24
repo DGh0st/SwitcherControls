@@ -32,7 +32,7 @@ void setupViewsForSize(CGSize size) {
 	CGRect bottomSectionViewFrame = CGRectMake(0, 25, bottomBackgroundView.frame.size.width, 64);
 	CGRect bottomScrollViewFrame = CGRectMake(0, 99, bottomBackgroundView.frame.size.width, 152);
 	
-	if ([[SCPreferences sharedInstance].bottomSection count] == 3) {
+	if ([SCPreferences sharedInstance].isBottomSectionBigger) {
 		bottomScrollViewFrame.size.height = 226;
 		CGRect frame = bottomBackgroundView.frame;
 		frame.size.height += 74;
@@ -286,7 +286,6 @@ UIPanGestureRecognizer *pan = nil;
 
 	pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panBottomView:)];
 	[pan setMinimumNumberOfTouches:1];
-	[pan setMaximumNumberOfTouches:1];
 	[bottomBackgroundView addGestureRecognizer:pan];
 
 	/*if (topBackgroundView.hidden) {

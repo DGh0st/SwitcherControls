@@ -4,7 +4,7 @@
 -(id)initWithFrame:(CGRect)frame {
 	self = [super initWithFrame:frame];
 	if (self != nil) {
-		if (%c(CCXMultiSliderSectionController)) { // horseshoe fix
+		if (%c(CCXMultiSliderSectionController)) { // horseshoe fix (any horseshoe class would work actually)
 			_brightnessView = [[ControlCenterBrightnessSectionView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, frame.size.height)];
 			_volumeView = [[ControlCenterVolumeSectionView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width - 1, frame.size.height)];
 		} else {

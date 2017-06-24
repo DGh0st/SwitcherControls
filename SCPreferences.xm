@@ -1,5 +1,5 @@
 #import "headers.h"
-#include "NSArray+CompareAddition.h"
+#import "NSArray+CompareAddition.h"
 
 #define identifier @"com.dgh0st.switchercontrols"
 #define kSettingsPath @"/var/mobile/Library/Preferences/com.dgh0st.switchercontrols.plist"
@@ -17,6 +17,11 @@
 -(id)init {
 	self = [super init];
 	if (self != nil) {
+		_topSection = [NSArray arrayWithObjects:@"Quick Launch Shortcuts", nil];
+		_bottomStickySection = [NSArray arrayWithObjects:@"Settings Toggles", nil];
+		_bottomSection = [NSArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil];
+		_isBottomSectionBigger = NO;
+
 		[self updatePreferences];
 	}
 	return self;
@@ -58,6 +63,7 @@
 		_topSection = [NSArray arrayWithObjects:@"Quick Launch Shortcuts", nil];
 		_bottomStickySection = [NSArray arrayWithObjects:@"Settings Toggles", nil];
 		_bottomSection = [NSArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil];
+		_isBottomSectionBigger = NO;
 		_isInteractiveCCEnabled = NO;
 		_multiSliderBackgroundAlpha = 0.06;
 		_isScaleIconLabelsEnabled = YES;
@@ -126,6 +132,8 @@
 	_topSection = (topSection == nil) ? [NSArray arrayWithObjects:@"Quick Launch Shortcuts", nil] : topSection;
 	_bottomStickySection = (bottomStickySection == nil) ? [NSArray arrayWithObjects:@"Settings Toggles", nil] : bottomStickySection;
 	_bottomSection = (bottomSection == nil) ? [NSArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil] : bottomSection;
+
+	_isBottomSectionBigger = (_bottomSection != nil && [_bottomSection count] == 3);
 
 	_isInteractiveCCEnabled = [prefs objectForKey:@"isInteractiveCCEnabled"] ? [[prefs objectForKey:@"isInteractiveCCEnabled"] boolValue] : NO;
 

@@ -79,8 +79,10 @@
 	if ([self superview] != nil && ([[[self superview] class] isEqual:[ControlCenterBrightnessSectionView class]] || [[[[self superview] superview] class] isEqual:[ControlCenterBrightnessSectionView class]])) {
 		CGRect frame = self.frame;
 		frame.origin.x = 1;
-		if (%c(CCXMultiSliderSectionController) || (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && screenSize.height <= 568))
+		if (%c(CCXMultiSliderSectionController)) // horseshoe fix (any horseshoe class would work actually)
 			frame.origin.y = -1;
+		else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && screenSize.height <= 568)
+			frame.origin.y = -4;
 		else
 			frame.origin.y = -6;
 		self.frame = frame;

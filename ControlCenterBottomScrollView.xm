@@ -23,28 +23,32 @@
 			secondPageViewFrame.origin.x = firstPageViewFrame.origin.x;
 			firstPageViewFrame = CGRectZero;
 			view.frame = CGRectZero;
-		} else if (middleClass == [ControlCenterFailureSectionClass class] && bottomClass == [ControlCenterFailureSectionClass class]) {
-			ControlCenterSectionView *topSection = [[topClass alloc] initWithFrame:topViewFrame];
-			//topSection.center = CGPointMake(firstPageViewFrame.size.width / 2, firstPageViewFrame.size.height / 2);
-			[view addSubview:topSection];
-
-			[topSection release];
 		} else {
-			ControlCenterSectionView *topSection = [[topClass alloc] initWithFrame:topViewFrame];
-			[view addSubview:topSection];
+			if (![topClass isEqual:[ControlCenterFailureSectionClass class]]) {
+				ControlCenterSectionView *topSection = [[topClass alloc] initWithFrame:topViewFrame];
+				[view addSubview:topSection];
 
-			ControlCenterSectionView *middleSection = [[middleClass alloc] initWithFrame:middleViewFrame];
-			[view addSubview:middleSection];
+				[topSection release];
+			} else {
+				bottomViewFrame = middleViewFrame;
+				middleViewFrame = topViewFrame;
+			}
 
-			if (bottomClass != [ControlCenterFailureSectionClass class]) {
+			if (![middleClass isEqual:[ControlCenterFailureSectionClass class]]) {
+				ControlCenterSectionView *middleSection = [[middleClass alloc] initWithFrame:middleViewFrame];
+				[view addSubview:middleSection];
+
+				[middleSection release];
+			} else {
+				bottomViewFrame = middleViewFrame;
+			}
+
+			if (![bottomClass isEqual:[ControlCenterFailureSectionClass class]]) {
 				ControlCenterSectionView *bottomSection = [[bottomClass alloc] initWithFrame:bottomViewFrame];
 				[view addSubview:bottomSection];
 
 				[bottomSection release];
 			}
-			
-			[topSection release];
-			[middleSection release];
 		}
 
 		ControlCenterMediaSectionView *mediaSection = [[ControlCenterMediaSectionView alloc] initWithFrame:secondPageViewFrame];

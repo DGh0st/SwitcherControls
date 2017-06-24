@@ -30,6 +30,7 @@ typedef enum {
 @property (nonatomic, assign, readonly) BOOL isInteractiveCCEnabled;
 @property (nonatomic, assign, readonly) CGFloat multiSliderBackgroundAlpha;
 @property (nonatomic, assign, readonly) BOOL isScaleIconLabelsEnabled;
+@property (nonatomic, assign, readonly) BOOL isBottomSectionBigger;
 @property (nonatomic, assign) BOOL requiresRelayout;
 +(SCPreferences *)sharedInstance;
 -(void)updatePreferences;
