@@ -26,6 +26,11 @@
 		} else {
 			if (![topClass isEqual:[ControlCenterFailureSectionClass class]]) {
 				ControlCenterSectionView *topSection = [[topClass alloc] initWithFrame:topViewFrame];
+
+				CGFloat additionalHeight = (topSection.frame.size.height - topViewFrame.size.height);
+				frame.size.height += additionalHeight;
+				middleViewFrame.origin.y += additionalHeight;
+
 				[view addSubview:topSection];
 
 				[topSection release];
@@ -36,6 +41,11 @@
 
 			if (![middleClass isEqual:[ControlCenterFailureSectionClass class]]) {
 				ControlCenterSectionView *middleSection = [[middleClass alloc] initWithFrame:middleViewFrame];
+
+				CGFloat additionalHeight = (middleSection.frame.size.height - middleViewFrame.size.height);
+				frame.size.height += additionalHeight;
+				bottomViewFrame.origin.y += additionalHeight;
+
 				[view addSubview:middleSection];
 
 				[middleSection release];
@@ -45,11 +55,23 @@
 
 			if (![bottomClass isEqual:[ControlCenterFailureSectionClass class]]) {
 				ControlCenterSectionView *bottomSection = [[bottomClass alloc] initWithFrame:bottomViewFrame];
+
+				CGFloat additionalHeight = (bottomSection.frame.size.height - bottomViewFrame.size.height);
+				frame.size.height += additionalHeight;
+
 				[view addSubview:bottomSection];
 
 				[bottomSection release];
 			}
 		}
+
+		if (frame.size.height < 152)
+			frame.size.height = 152;
+
+		firstPageViewFrame.size.height = frame.size.height;
+		secondPageViewFrame.size.height = frame.size.height;
+		thirdPageViewFrame.size.height = frame.size.height;
+		view.frame = firstPageViewFrame;
 
 		ControlCenterMediaSectionView *mediaSection = [[ControlCenterMediaSectionView alloc] initWithFrame:secondPageViewFrame];
 		[mediaSection setupRoutingPageWithFrame:thirdPageViewFrame];
@@ -57,6 +79,7 @@
 		[self addSubview:view];
 		[self addSubview:mediaSection];
 
+		self.frame = frame;
 		self.contentSize = CGSizeMake(firstPageViewFrame.size.width + secondPageViewFrame.size.width + thirdPageViewFrame.size.width, frame.size.height);
 		self.pagingEnabled = YES;
 		[self setShowsHorizontalScrollIndicator:NO];

@@ -86,6 +86,10 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Background</string>
+			<key>footerText</key>
+			<string>set the grayness for the background</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -98,28 +102,78 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<string>PSListItemsController</string>
 			<key>validTitles</key>
 				<array>
-					<string>Extra Light</string>
+					<string>Ultra Light</string>
+					<string>Light Low</string>
+					<string>Flat Semi Light</string>
+					<string>Semi Light</string>
+					<string>Adaptive Light</string>
 					<string>Light</string>
+					<string>Blur</string>
+					<string>Colored</string>
+					<string>Ultra Colored</string>
+					<string>Dark with Zoom</string>
 					<string>Dark</string>
+					<string>Ultra Dark</string>
+					<string>Dark Low</string>
 				</array>
 			<key>validValues</key>
 				<array>
-					<string>ExtraLight</string>
-					<string>Light</string>
-					<string>Dark</string>
+					<integer>2010</integer>
+					<integer>2029</integer>
+					<integer>2071</integer>
+					<integer>2070</integer>
+					<integer>2060</integer>
+					<integer>2020</integer>
+					<integer>2</integer>
+					<integer>2040</integer>
+					<integer>2080</integer>
+					<integer>2031</integer>
+					<integer>2030</integer>
+					<integer>2050</integer>
+					<integer>2039</integer>
 				</array>
 			<key>shortTitles</key>
 				<array>
-					<string>Extra Light</string>
+					<string>Ultra Light</string>
+					<string>Light Low</string>
+					<string>Flat Semi Light</string>
+					<string>Semi Light</string>
+					<string>Adaptive Light</string>
 					<string>Light</string>
+					<string>Blur</string>
+					<string>Colored</string>
+					<string>Ultra Colored</string>
+					<string>Dark with Zoom</string>
 					<string>Dark</string>
+					<string>Ultra Dark</string>
+					<string>Dark Low</string>
 				</array>
 			<key>default</key>
-			<string>Light</string>
+			<integer>2010</integer>
 			<key>defaults</key>
 			<string>com.dgh0st.switchercontrols</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>cellClass</key>
+			<string>SCCSliderCell</string>
+			<key>min</key>
+			<real>0.0</real>
+			<key>max</key>
+			<real>1.0</real>
+			<key>showValue</key>
+			<true/>
+			<key>default</key>
+			<real>0.0</real>
+			<key>defaults</key>
+			<string>com.dgh0st.switchercontrols</string>
+			<key>key</key>
+			<string>backgroundGrayness</string>
+			<key>PostNotification</key>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -196,7 +250,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>label</key>
 			<string>Hide Portrait</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -210,7 +264,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>label</key>
 			<string>Hide Landscape</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -236,7 +290,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>key</key>
 			<string>portraitTopHeight</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -262,7 +316,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>key</key>
 			<string>landscapeTopHeight</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -290,7 +344,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>key</key>
 			<string>portraitBottomHeight</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -318,7 +372,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>key</key>
 			<string>landscapeBottomHeight</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -414,7 +468,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>key</key>
 			<string>multiSliderBackgroundAlpha</string>
 			<key>PostNotification</key>
-			<string>com.dgh0st.switchercontrols/settingschanged</string>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>

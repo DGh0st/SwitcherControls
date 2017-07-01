@@ -155,6 +155,8 @@
 
 		[iconView release];
 		[bundle release];
+
+		self.allSections = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", @"Settings Toggles", @"Brightness Slider", @"NightShift And AirPlay/Drop", @"Volume Slider", @"Multi Slider", nil];
 	}
 
 	return self;
@@ -276,7 +278,7 @@
 	if (self.bottomStickySection != nil && [self.bottomStickySection count] > 0) {
 		NSMutableArray *bottomStickyObjects = [NSMutableArray array];
 		for (id object in self.bottomStickySection) {
-			if (![sections containsObject:object]) {
+			if (![sections containsObject:object] && [self.allSections containsObject:object]) {
 				[sections addObject:object];
 				[bottomStickyObjects addObject:object];
 			}
@@ -287,7 +289,7 @@
 	if (self.bottomSections != nil && [self.bottomSections count] > 0) {
 		NSMutableArray *bottomObjects = [NSMutableArray array];
 		for (id object in self.bottomSections) {
-			if (![sections containsObject:object]) {
+			if (![sections containsObject:object] && [self.allSections containsObject:object]) {
 				[sections addObject:object];
 				[bottomObjects addObject:object];
 			}
@@ -298,7 +300,7 @@
 	if (self.hiddenSections != nil && [self.hiddenSections count] > 0) {
 		NSMutableArray *hiddenObjects = [NSMutableArray array];
 		for (id object in self.hiddenSections) {
-			if (![sections containsObject:object]) {
+			if (![sections containsObject:object] && [self.allSections containsObject:object]) {
 				[sections addObject:object];
 				[hiddenObjects addObject:object];
 			}
@@ -335,7 +337,7 @@
 	[hiddenSpecifier setProperty:@"com.dgh0st.switchercontrols" forKey:@"defaults"];
 	[self setPreferenceValue:self.hiddenSections specifier:hiddenSpecifier];
 
-	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.dgh0st.switchercontrols/settingschanged"), NULL, NULL, YES);
+	CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.dgh0st.switchercontrols/sectionsChanged"), NULL, NULL, YES);
 }
 
 - (void)updateArrays {
@@ -344,19 +346,18 @@
 		self.bottomStickySection = (NSMutableArray *)[self.prefs objectForKey:@"BottomStickySection"];
 		self.bottomSections = (NSMutableArray *)[self.prefs objectForKey:@"BottomSections"];
 		self.hiddenSections = (NSMutableArray *)[self.prefs objectForKey:@"HiddenSections"];
-		self.allSections = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", @"Settings Toggles", @"Brightness Slider", @"NightShift And AirPlay/Drop", @"Volume Slider", @"Multi Slider", nil];
-
-		if ((self.topSection == nil && self.bottomStickySection == nil && self.bottomSections == nil && self.hiddenSections == nil)) {
-			self.topSection = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", nil];
-			self.bottomStickySection = [NSMutableArray arrayWithObjects:@"Settings Toggles", nil];
-			self.bottomSections = [NSMutableArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil];
-			self.hiddenSections = [NSMutableArray arrayWithObjects:@"Volume Slider", @"Multi Slider", nil];
-			[self writeSectionsToFile];
-		}
-
-		[self removeDuplicates];
-		[self.tableView reloadData];
 	}
+	
+	if (self.prefs == nil || (self.topSection == nil && self.bottomStickySection == nil && self.bottomSections == nil && self.hiddenSections == nil)) {
+		self.topSection = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", nil];
+		self.bottomStickySection = [NSMutableArray arrayWithObjects:@"Settings Toggles", nil];
+		self.bottomSections = [NSMutableArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil];
+		self.hiddenSections = [NSMutableArray arrayWithObjects:@"Volume Slider", @"Multi Slider", nil];
+		//[self writeSectionsToFile];
+	}
+
+	[self removeDuplicates];
+	[self.tableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

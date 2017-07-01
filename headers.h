@@ -8,11 +8,14 @@ typedef enum {
 	kBottom
 } SectionPosition;
 
-@interface SCPreferences : NSObject
+@interface SCPreferences : NSObject {
+	NSMutableDictionary *prefs;
+}
 @property (nonatomic, assign, readonly) BOOL isTweakEnabled;
 @property (nonatomic, assign, readonly) BOOL isReplaceCCEnabled;
-@property (nonatomic, assign, readonly) UIBlurEffectStyle blurStyle;
+@property (nonatomic, assign, readonly) NSInteger blurStyle;
 @property (nonatomic, assign, readonly) CGFloat animationSpeed;
+@property (nonatomic, assign, readonly) CGFloat backgroundGrayness;
 @property (nonatomic, assign, readonly) NSInteger defaultPage;
 @property (nonatomic, assign, readonly) BOOL isMediaPageOnPlayingEnabled;
 @property (nonatomic, assign, readonly) CGFloat portraitScale;
@@ -30,10 +33,12 @@ typedef enum {
 @property (nonatomic, assign, readonly) BOOL isInteractiveCCEnabled;
 @property (nonatomic, assign, readonly) CGFloat multiSliderBackgroundAlpha;
 @property (nonatomic, assign, readonly) BOOL isScaleIconLabelsEnabled;
-@property (nonatomic, assign, readonly) BOOL isBottomSectionBigger;
 @property (nonatomic, assign) BOOL requiresRelayout;
 +(SCPreferences *)sharedInstance;
 -(void)updatePreferences;
+-(void)updateLayoutChangePreferences;
+-(void)updateSectionPreferences;
+-(Class)classForSection:(NSString *)section;
 -(Class)sectionClass:(SectionPosition)position withIndex:(NSInteger)index;
 -(BOOL)isAppDisabled:(NSString *)appId;
 @end
@@ -57,7 +62,7 @@ typedef enum {
 @end
 
 @interface SBDeckSwitcherItemContainer : UIView
--(void)setContentPageViewScale:(CGFloat)arg1;
+@property (assign,nonatomic) double titleOpacity;
 @end
 
 @interface SBAppSwitcherScrollView : UIScrollView
@@ -361,4 +366,16 @@ typedef enum {
 	ControlCenterVolumeSectionView *_volumeView;
 	BOOL isBrightnessVisible;
 }
+@end
+
+@interface _UIBackdropView : UIView
+-(id)initWithFrame:(CGRect)arg1 autosizesToFitSuperview:(BOOL)arg2 settings:(id)arg3;
+@end
+
+@interface _UIBackdropViewSettings : NSObject
++(id)settingsForStyle:(NSInteger)arg1;
+@property (nonatomic,retain) UIColor * colorTint;
+@end
+
+@interface __NSCFString : NSMutableString
 @end

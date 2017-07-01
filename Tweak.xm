@@ -18,6 +18,8 @@ UIView *bottomBackgroundView = nil;
 UIView *topBackgroundView = nil;
 ControlCenterBottomScrollView *bottomScrollView = nil;
 
+UIInterfaceOrientation sessionOrientation = UIInterfaceOrientationPortrait;
+
 void setupViewsForSize(CGSize size) {
 	if (size.width > size.height) {
 		bottomBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, size.height - [SCPreferences sharedInstance].landscapeBottomHeight, size.width, 252)];
@@ -31,29 +33,25 @@ void setupViewsForSize(CGSize size) {
 	CGRect topSectionViewFrame = CGRectMake(0, 0, topBackgroundView.frame.size.width, 64);
 	CGRect bottomSectionViewFrame = CGRectMake(0, 25, bottomBackgroundView.frame.size.width, 64);
 	CGRect bottomScrollViewFrame = CGRectMake(0, 99, bottomBackgroundView.frame.size.width, 152);
-	
-	if ([SCPreferences sharedInstance].isBottomSectionBigger) {
+
+	NSInteger numberOfSections = 0;
+	if ([SCPreferences sharedInstance].bottomSection != nil) {
+		NSInteger totalSections = [[SCPreferences sharedInstance].bottomSection count];
+		for (NSInteger i = 0; i < totalSections; i++)
+			if (![[[SCPreferences sharedInstance] sectionClass:kBottom withIndex:i] isEqual:[ControlCenterFailureSectionClass class]])
+				numberOfSections++;
+	}
+
+	if (numberOfSections == 3) {
 		bottomScrollViewFrame.size.height = 226;
 		CGRect frame = bottomBackgroundView.frame;
 		frame.size.height += 74;
 		bottomBackgroundView.frame = frame;
 	}
 
-	[bottomBackgroundView setBackgroundColor:[UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.1]];
-	[topBackgroundView setBackgroundColor:[UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.1]];
-
-	UIBlurEffect *backgroundEffect = [UIBlurEffect effectWithStyle:[SCPreferences sharedInstance].blurStyle];
-	UIVisualEffectView *bottomEffectView = [[UIVisualEffectView alloc] initWithFrame:CGRectMake(0, 0, bottomBackgroundView.frame.size.width, bottomBackgroundView.frame.size.height)];
-	UIVisualEffectView *topEffectView = [[UIVisualEffectView alloc] initWithFrame:CGRectMake(0, 0, topBackgroundView.frame.size.width, topBackgroundView.frame.size.height)];
-
-	[bottomEffectView setEffect:backgroundEffect];
-	[topEffectView setEffect:backgroundEffect];
-
-	[bottomBackgroundView addSubview:bottomEffectView];
-	[topBackgroundView addSubview:topEffectView];
-
 	UIView *bottomGrabberView = [[UIView alloc] initWithFrame:bottomGrabberViewFrame];
-	if ([SCPreferences sharedInstance].blurStyle == UIBlurEffectStyleDark)
+	NSInteger style = [SCPreferences sharedInstance].blurStyle;
+	if (style == 2031 || style == 2030 || style == 2039 || style == 2050)
 		[bottomGrabberView setBackgroundColor:[UIColor whiteColor]];
 	else
 		[bottomGrabberView setBackgroundColor:[UIColor blackColor]];
@@ -63,16 +61,32 @@ void setupViewsForSize(CGSize size) {
 	Class topClass = [[SCPreferences sharedInstance] sectionClass:kTop withIndex:0];
 	if (![topClass isEqual:[ControlCenterFailureSectionClass class]]) {
 		ControlCenterSectionView *topSection = [[topClass alloc] initWithFrame:topSectionViewFrame];
+
+		CGRect frame = topBackgroundView.frame;
+		frame.size.height += (topSection.frame.size.height - topSectionViewFrame.size.height);
+		topBackgroundView.frame = frame;
+
 		topSection.center = CGPointMake(topBackgroundView.frame.size.width / 2, topBackgroundView.frame.size.height / 2);
 		[topBackgroundView addSubview:topSection];
 		[topSection release];
 	} else {
 		[topBackgroundView setHidden:YES];
+
+		CGRect frame = topBackgroundView.frame;
+		frame.size.height = 0;
+		topBackgroundView.frame = frame;
 	}
 
 	Class bottomStickyClass = [[SCPreferences sharedInstance] sectionClass:kBottomSticky withIndex:0];
 	if (![bottomStickyClass isEqual:[ControlCenterFailureSectionClass class]]) {
 		ControlCenterSectionView *bottomStickySection = [[bottomStickyClass alloc] initWithFrame:bottomSectionViewFrame];
+
+		CGFloat additionalHeight = (bottomStickySection.frame.size.height - bottomSectionViewFrame.size.height);
+		CGRect frame = bottomBackgroundView.frame;
+		frame.size.height += additionalHeight;
+		bottomBackgroundView.frame = frame;
+		bottomScrollViewFrame.origin.y += additionalHeight;
+
 		[bottomBackgroundView addSubview:bottomStickySection];
 		[bottomStickySection release];
 	} else {
@@ -84,7 +98,22 @@ void setupViewsForSize(CGSize size) {
 	}
 
 	bottomScrollView = [[ControlCenterBottomScrollView alloc] initWithFrame:bottomScrollViewFrame];
+
+	CGRect frame = bottomBackgroundView.frame;
+	frame.size.height += (bottomScrollView.frame.size.height - bottomScrollViewFrame.size.height);
+	frame.origin.y = size.height - MIN(frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight);
+	bottomBackgroundView.frame = frame;
+
 	[bottomBackgroundView addSubview:bottomScrollView];
+
+	CGFloat grayness = [SCPreferences sharedInstance].backgroundGrayness;
+	_UIBackdropViewSettings *settings = [%c(_UIBackdropViewSettings) settingsForStyle:style];
+	[settings setColorTint:[UIColor colorWithRed:grayness green:grayness blue:grayness alpha:0.1]];
+	_UIBackdropView *bottomEffectView = [[%c(_UIBackdropView) alloc] initWithFrame:CGRectZero autosizesToFitSuperview:YES settings:settings];
+	_UIBackdropView *topEffectView = [[%c(_UIBackdropView) alloc] initWithFrame:CGRectZero autosizesToFitSuperview:YES settings:settings];
+
+	[bottomBackgroundView insertSubview:bottomEffectView atIndex:0];
+	[topBackgroundView insertSubview:topEffectView atIndex:0];
 
 	[bottomEffectView release];
 	[topEffectView release];
@@ -151,20 +180,12 @@ void relayoutViewsIfNeeded() {
 	bottomScrollViewLandscape = bottomScrollView;
 }
 
-/*%hook SpringBoard
--(void)applicationDidFinishLaunching:(id)arg1 {
-	%orig(arg1);
-
-	relayoutViewsIfNeeded();
-}
-%end*/
-
 %hook SBDeckSwitcherItemContainer
 +(CGFloat)spacingBetweenSnapshotAndIcon {
 	CGFloat result = %orig();
 	if (![SCPreferences sharedInstance].isScaleIconLabelsEnabled)
 		return result;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 		return result * [SCPreferences sharedInstance].portraitScale;
 	return result * [SCPreferences sharedInstance].landscapeScale;
 }
@@ -174,7 +195,7 @@ void relayoutViewsIfNeeded() {
 	UIView *container = MSHookIvar<UIView *>(self, "_iconAndLabelContainer");
 	if (container == nil || ![SCPreferences sharedInstance].isScaleIconLabelsEnabled)
 		return result;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 		return CGAffineTransformScale(result, [SCPreferences sharedInstance].portraitScale, [SCPreferences sharedInstance].portraitScale);
 	return CGAffineTransformScale(result, [SCPreferences sharedInstance].landscapeScale, [SCPreferences sharedInstance].landscapeScale);
 }
@@ -183,9 +204,30 @@ void relayoutViewsIfNeeded() {
 %hook SBReduceMotionDeckSwitcherViewController
 -(CGFloat)_leadingOffsetForIndex:(NSUInteger)arg1 displayItemsCount:(NSUInteger)arg2 transitionParameters:(UIEdgeInsets)arg3 scrollProgress:(CGFloat)arg4 ignoringKillingAdjustments:(BOOL)arg5 {
 	CGFloat result = %orig(arg1, arg2, arg3, arg4, arg5);
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 		return result * [SCPreferences sharedInstance].portraitScale;
 	return result * [SCPreferences sharedInstance].landscapeScale;
+}
+
+-(BOOL)_shouldShowIconAndTitleInItemContainers {
+	BOOL result = %orig();
+	if (topBackgroundView.hidden)
+		return result;
+	return YES;
+}
+
+-(id)_iconTitleContainerForDisplayItem:(id)arg1 {
+	id result = %orig(arg1);
+	if (topBackgroundView.hidden)
+		return result;
+	return nil;
+}
+
+-(CGFloat)_opacityForIconTitleViewAtIndex:(NSUInteger)arg1 {
+	CGFloat result = %orig(arg1);
+	if (topBackgroundView.hidden)
+		return result;
+	return 1.0;
 }
 %end
 
@@ -194,11 +236,12 @@ UIPanGestureRecognizer *pan = nil;
 
 -(void)viewDidLoad {
 	deckSwitcher = self;
+	sessionOrientation = [[%c(SpringBoard) sharedApplication] activeInterfaceOrientation];
 	%orig();
 
 	relayoutViewsIfNeeded();
 
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation])) {
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation)) {
 		bottomBackgroundView = bottomBackgroundViewPortrait;
 		topBackgroundView = topBackgroundViewPortrait;
 		bottomScrollView = bottomScrollViewPortrait;
@@ -236,7 +279,7 @@ UIPanGestureRecognizer *pan = nil;
 	CGFloat result = %orig(arg1, arg2, arg3);
 	if (arg2 == 0.0 || !shouldDisplayTweakCC)
 		return result;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 		return result * [SCPreferences sharedInstance].portraitScale;
 	return result * [SCPreferences sharedInstance].landscapeScale;
 }*/
@@ -245,7 +288,7 @@ UIPanGestureRecognizer *pan = nil;
 	CGFloat result = %orig(arg1);
 	if (arg1 == 0.0 || !shouldDisplayTweakCC)
 		return result;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 		return result * [SCPreferences sharedInstance].portraitScale;
 	return result * [SCPreferences sharedInstance].landscapeScale;
 }
@@ -254,7 +297,7 @@ UIPanGestureRecognizer *pan = nil;
 	CGFloat result = %orig();
 	if (!shouldDisplayTweakCC)
 		return result;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 		return result * [SCPreferences sharedInstance].portraitScale;
 	return result * [SCPreferences sharedInstance].landscapeScale;
 }
@@ -265,8 +308,8 @@ UIPanGestureRecognizer *pan = nil;
 
 	relayoutViewsIfNeeded();
 
-	UIInterfaceOrientation currentOrientation = [[%c(SpringBoard) sharedApplication] activeInterfaceOrientation];
-	if (UIInterfaceOrientationIsPortrait(currentOrientation)) {
+	sessionOrientation = [[%c(SpringBoard) sharedApplication] activeInterfaceOrientation];
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation)) {
 		bottomBackgroundView = bottomBackgroundViewPortrait;
 		topBackgroundView = topBackgroundViewPortrait;
 		bottomScrollView = bottomScrollViewPortrait;
@@ -290,7 +333,7 @@ UIPanGestureRecognizer *pan = nil;
 
 	/*if (topBackgroundView.hidden) {
 		SBAppSwitcherScrollView *_scrollView = MSHookIvar<SBAppSwitcherScrollView *>(self, "_scrollView");
-		if (UIInterfaceOrientationIsPortrait(currentOrientation))
+		if (UIInterfaceOrientationIsPortrait(sessionOrientation))
 			[UIView animateWithDuration:0.1 animations:^{
 				//_scrollView.transform = CGAffineTransformMakeScale([SCPreferences sharedInstance].portraitScale, [SCPreferences sharedInstance].portraitScale);
 				_scrollView.transform = CGAffineTransformMakeTranslation(0, -screenSize.height * (0.95 - [SCPreferences sharedInstance].portraitScale));
@@ -307,7 +350,7 @@ UIPanGestureRecognizer *pan = nil;
 	[self.view bringSubviewToFront:bottomBackgroundView];
 	[self.view bringSubviewToFront:topBackgroundView];
 
-	bottomBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, topBackgroundView.frame.size.height);
+	bottomBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, MIN(bottomBackgroundView.frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight));
 	topBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, -topBackgroundView.frame.size.height);
 	[UIView animateWithDuration:[SCPreferences sharedInstance].animationSpeed animations:^{
 		bottomBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, 0.0);
@@ -337,7 +380,7 @@ UIPanGestureRecognizer *pan = nil;
 
 	[UIView animateWithDuration:[SCPreferences sharedInstance].animationSpeed animations:^{
 		bottomBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, topBackgroundView.frame.size.height);
-		topBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, -topBackgroundView.frame.size.height);
+		topBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, -MIN(bottomBackgroundView.frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight));
 	} completion:^(BOOL finished){
 		if (finished) {
 			hideIfNeeded();
@@ -351,12 +394,7 @@ UIPanGestureRecognizer *pan = nil;
 %new
 -(void)panBottomView:(UIPanGestureRecognizer *)arg1 {
 	CGPoint translatedPoint = [arg1 translationInView:bottomScrollView.superview];
-
-	CGFloat visibleHeight = 98;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
-		visibleHeight = [SCPreferences sharedInstance].portraitBottomHeight;
-	else
-		visibleHeight = [SCPreferences sharedInstance].landscapeBottomHeight;
+	CGFloat visibleHeight = MIN(bottomBackgroundView.frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight);
 
 	if (arg1.state == UIGestureRecognizerStateBegan) {
 		startPanPoint = translatedPoint;
@@ -384,11 +422,7 @@ UIPanGestureRecognizer *pan = nil;
 
 %new
 -(void)interactiveAppearance:(CGFloat)arg1 didEnd:(BOOL)arg2 {
-	CGFloat visibleHeight = 98;
-	if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation]))
-		visibleHeight = [SCPreferences sharedInstance].portraitBottomHeight;
-	else
-		visibleHeight = [SCPreferences sharedInstance].landscapeBottomHeight;
+	CGFloat visibleHeight = MIN(bottomBackgroundView.frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight);
 
 	arg1 -= visibleHeight;
 
@@ -568,10 +602,20 @@ Original2:
 }
 %end*/
 
-static void preferencesChanged() {	
+static void preferencesChanged() {
 	[[SCPreferences sharedInstance] updatePreferences];
+}
+
+static void preferencesSectionChanged() {
+	[[SCPreferences sharedInstance] updateSectionPreferences];
 
 	relayoutViewsIfNeeded();
+}
+
+static void preferencesRelayoutChanged() {
+	[[SCPreferences sharedInstance] updateLayoutChangePreferences];
+
+	preferencesSectionChanged();
 }
 
 static void respringNotification() {
@@ -579,6 +623,8 @@ static void respringNotification() {
 }
 
 %dtor {
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("com.dgh0st.switchercontrols/sectionsChanged"), NULL);
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("com.dgh0st.switchercontrols/relayoutPreferencesChanged"), NULL);
 	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("com.dgh0st.switchercontrols/settingschanged"), NULL);
 	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("com.dgh0st.switchercontrols/respring"), NULL);
 
@@ -587,7 +633,11 @@ static void respringNotification() {
 
 %ctor {
 	[[SCPreferences sharedInstance] updatePreferences];
+	[[SCPreferences sharedInstance] updateLayoutChangePreferences];
+	[[SCPreferences sharedInstance] updateSectionPreferences];
 
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)preferencesSectionChanged, CFSTR("com.dgh0st.switchercontrols/sectionsChanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)preferencesRelayoutChanged, CFSTR("com.dgh0st.switchercontrols/relayoutPreferencesChanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)preferencesChanged, CFSTR("com.dgh0st.switchercontrols/settingschanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)respringNotification, CFSTR("com.dgh0st.switchercontrols/respring"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 

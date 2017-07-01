@@ -109,7 +109,8 @@
 		MPUControlCenterMetadataView* _artistAlbumConcatenatedLabel = MSHookIvar<MPUControlCenterMetadataView *>(self, "_artistAlbumConcatenatedLabel");
 
 		CGFloat parentHeight = [self superview].frame.size.height;
-		#define compactHeight 152
+		#define twoSectionHeight 152
+		#define threeSectionHeight 226
 
 		if (_artworkView != nil && [self superview] != nil) {
 			CGRect frame = _artworkView.frame;
@@ -123,11 +124,6 @@
 			if (_artworkView != nil)
 				frame.origin.y = _artworkView.frame.size.height - frame.size.height - 1;
 			_titleLabel.frame = frame;
-			UILabel *_label = MSHookIvar<UILabel *>(_titleLabel, "_label");
-			if ([SCPreferences sharedInstance].blurStyle == UIBlurEffectStyleExtraLight)
-				[_label setTextColor:[UIColor blackColor]];
-			else
-				[_label setTintColor:[UIColor whiteColor]];
 			[_titleLabel layoutSubviews];
 		}
 		
@@ -164,20 +160,20 @@
 			MPUEmptyNowPlayingView *_emptyNowPlayingView = [self emptyNowPlayingView];
 			if (_emptyNowPlayingView != nil && !_emptyNowPlayingView.hidden) {
 				CGRect frame = _transportControls.frame;
-				if (parentHeight == compactHeight)
+				if (parentHeight <= twoSectionHeight)
 					frame.origin.y = 60;
-				else
+				else if (parentHeight <= threeSectionHeight)
 					frame.origin.y = 97;
 				_transportControls.frame = frame;
 			} else if (_timeView != nil && !_timeView.hidden) {
 				CGRect frame = _transportControls.frame;
 				if (_timeView.alwaysLive) {
-					if (parentHeight == compactHeight)
+					if (parentHeight <= twoSectionHeight)
 						frame.origin.y = 63;
-					else
+					else if (parentHeight <= threeSectionHeight)
 						frame.origin.y = 100;
 				} else {
-					if (parentHeight == compactHeight)
+					if (parentHeight <= twoSectionHeight)
 						frame.origin.y = 70;
 				}
 				_transportControls.frame = frame;
@@ -187,20 +183,16 @@
 
 		if (_timeView != nil) {
 			CGRect frame = _timeView.frame;
-			if (parentHeight == compactHeight)
+			if (parentHeight <= twoSectionHeight)
 				frame.origin.y = 50;
-			else
+			else if (parentHeight <= threeSectionHeight)
 				frame.origin.y = 87;
 			_timeView.frame = frame;
 			[_timeView layoutSubviews];
 
 			if (_volumeView != nil && !_timeView.hidden && !_timeView.alwaysLive) {
-				if ([SCPreferences sharedInstance].blurStyle == UIBlurEffectStyleExtraLight)
-					[_volumeView setTintColor:[UIColor blackColor]];
-				else
-					[_volumeView setTintColor:[UIColor whiteColor]];
 				CGRect frame = _volumeView.frame;
-				if (parentHeight == compactHeight)
+				if (parentHeight <= twoSectionHeight)
 					frame.origin.y = 105;
 				_volumeView.frame = frame;
 				[_volumeView layoutSubviews];
