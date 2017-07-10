@@ -201,6 +201,26 @@ void relayoutViewsIfNeeded() {
 }
 %end
 
+%hook CS3DSwitcherPageScrollView
+-(void)layoutSubviews {
+	%orig();
+
+
+	UIView *iconView = MSHookIvar<UIView *>(self, "_iconView");
+	if (iconView != nil && [[iconView subviews] count] > 0) {
+		id icon = [[iconView subviews] objectAtIndex:0];
+		if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
+			CGRect frame = ((SBIconView *)icon).frame;
+			if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+				frame.origin.y = -([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
+			else
+				frame.origin.y = -([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
+			((SBIconView *)icon).frame = frame;
+		}
+	}
+}
+%end
+
 %hook SBReduceMotionDeckSwitcherViewController
 -(CGFloat)_leadingOffsetForIndex:(NSUInteger)arg1 displayItemsCount:(NSUInteger)arg2 transitionParameters:(UIEdgeInsets)arg3 scrollProgress:(CGFloat)arg4 ignoringKillingAdjustments:(BOOL)arg5 {
 	CGFloat result = %orig(arg1, arg2, arg3, arg4, arg5);
@@ -295,6 +315,15 @@ UIPanGestureRecognizer *pan = nil;
 
 -(CGFloat)_desiredXOriginForQuantizedTopPage {
 	CGFloat result = %orig();
+	if (!shouldDisplayTweakCC)
+		return result;
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+		return result * [SCPreferences sharedInstance].portraitScale;
+	return result * [SCPreferences sharedInstance].landscapeScale;
+}
+
+-(CGFloat)minimumVerticalTranslationForKillingOfContainer:(id)arg1 {
+	CGFloat result = %orig(arg1);
 	if (!shouldDisplayTweakCC)
 		return result;
 	if (UIInterfaceOrientationIsPortrait(sessionOrientation))

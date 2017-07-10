@@ -379,6 +379,9 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Portrait Scale</string>
+			<key>footerText</key>
+			<string>Scale the cards for portrait mode.
+If 3DSwitcher 2 is enabled, then this will move the icons up vertically.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -405,6 +408,9 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Landscape Scale</string>
+			<key>footerText</key>
+			<string>Scale the cards for portrait mode.
+If 3DSwitcher 2 is enabled, then this will move the icons up vertically.</string>
 		</dict>
 		<dict>
 			<key>cell</key>

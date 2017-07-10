@@ -379,3 +379,12 @@ typedef enum {
 
 @interface __NSCFString : NSMutableString
 @end
+
+@interface SBIconView : UIView
+@end
+
+@interface CS3DSwitcherViewController : UIViewController
+@end
+
+@interface CS3DSwitcherPageScrollView : UIScrollView
+@end
