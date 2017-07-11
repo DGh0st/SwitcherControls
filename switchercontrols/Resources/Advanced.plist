@@ -479,6 +479,58 @@ If 3DSwitcher 2 is enabled, then this will move the icons up vertically.</string
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Portrait Card Offset</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>cellClass</key>
+			<string>SCCSliderCell</string>
+			<key>min</key>
+			<real>0.0</real>
+			<key>max</key>
+			<real>1.0</real>
+			<key>showValue</key>
+			<true/>
+			<key>default</key>
+			<real>0.5</real>
+			<key>defaults</key>
+			<string>com.dgh0st.switchercontrols</string>
+			<key>key</key>
+			<string>portraitOffset</string>
+			<key>PostNotification</key>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Landscape Card Offset</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>cellClass</key>
+			<string>SCCSliderCell</string>
+			<key>min</key>
+			<real>0.0</real>
+			<key>max</key>
+			<real>1.0</real>
+			<key>showValue</key>
+			<true/>
+			<key>default</key>
+			<real>0.5</real>
+			<key>defaults</key>
+			<string>com.dgh0st.switchercontrols</string>
+			<key>key</key>
+			<string>landscapeOffset</string>
+			<key>PostNotification</key>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
 			<key>footerAlignment</key>
 			<integer>1</integer>
 			<key>footerText</key>

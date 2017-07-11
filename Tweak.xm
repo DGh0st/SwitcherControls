@@ -101,7 +101,7 @@ void setupViewsForSize(CGSize size) {
 
 	CGRect frame = bottomBackgroundView.frame;
 	frame.size.height += (bottomScrollView.frame.size.height - bottomScrollViewFrame.size.height);
-	frame.origin.y = size.height - MIN(frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight);
+	frame.origin.y = size.height - MIN(frame.size.height, (size.height > size.width) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight);
 	bottomBackgroundView.frame = frame;
 
 	[bottomBackgroundView addSubview:bottomScrollView];
@@ -201,23 +201,74 @@ void relayoutViewsIfNeeded() {
 }
 %end
 
-%hook CS3DSwitcherPageScrollView
--(void)layoutSubviews {
-	%orig();
-
-
-	UIView *iconView = MSHookIvar<UIView *>(self, "_iconView");
-	if (iconView != nil && [[iconView subviews] count] > 0) {
-		id icon = [[iconView subviews] objectAtIndex:0];
-		if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
-			CGRect frame = ((SBIconView *)icon).frame;
+%hook CS3DSwitcherViewController
+-(CS3DSwitcherPageScrollView *)createViewAtIndex:(NSInteger)arg1 {
+	CS3DSwitcherPageScrollView *result = %orig(arg1);
+	if (shouldDisplayTweakCC) {
+		CS3DSwitcherPageView *pageView = MSHookIvar<CS3DSwitcherPageView *>(result, "_pageView");
+		if (pageView != nil) {
+			CGFloat yOffset = 0;
 			if (UIInterfaceOrientationIsPortrait(sessionOrientation))
-				frame.origin.y = -([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
+				yOffset += screenSize.height * [SCPreferences sharedInstance].portraitOffset;
 			else
-				frame.origin.y = -([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
-			((SBIconView *)icon).frame = frame;
+				yOffset += screenSize.width * [SCPreferences sharedInstance].landscapeOffset;
+			[UIView animateWithDuration:0.25 animations:^{
+				pageView.transform = CGAffineTransformTranslate(pageView.transform, 0, yOffset);
+			} completion:nil];
+		}
+
+		UIView *iconView = MSHookIvar<UIView *>(result, "_iconView");
+		if (iconView != nil && [[iconView subviews] count] > 0) {
+			id icon = [[iconView subviews] objectAtIndex:0];
+			if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
+				CGFloat yOffset = 0;
+				if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+					yOffset -= ([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
+				else
+					yOffset -= ([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
+				[UIView animateWithDuration:0.25 animations:^{
+					((SBIconView *)icon).transform = CGAffineTransformTranslate(((SBIconView *)icon).transform, 0, yOffset);
+				} completion:nil];
+			}
 		}
 	}
+	return result;
+}
+
+-(void)dismissToIndex:(NSInteger)arg1 animated:(BOOL)arg2 {
+	NSMutableArray *_pageViews = MSHookIvar<NSMutableArray *>(self, "_pageViews");
+	CS3DSwitcherPageScrollView *pageScrollView = [_pageViews objectAtIndex:arg1];
+	if (shouldDisplayTweakCC && pageScrollView != nil) {
+		CS3DSwitcherPageView *pageView = MSHookIvar<CS3DSwitcherPageView *>(pageScrollView, "_pageView");
+		if (pageView != nil) {
+			CGFloat yOffset = 0;
+			if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+				yOffset -= screenSize.height * [SCPreferences sharedInstance].portraitOffset;
+			else
+				yOffset -= screenSize.width * [SCPreferences sharedInstance].landscapeOffset;
+
+			[UIView animateWithDuration:(arg2 ? 0.25 : 0.0) animations:^{
+				pageView.transform = CGAffineTransformTranslate(pageView.transform, 0, yOffset);
+			} completion:nil];
+		}
+
+		UIView *iconView = MSHookIvar<UIView *>(pageScrollView, "_iconView");
+		if (iconView != nil && [[iconView subviews] count] > 0) {
+			id icon = [[iconView subviews] objectAtIndex:0];
+			if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
+				CGFloat yOffset = 0;
+				if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+					yOffset += ([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
+				else
+					yOffset += ([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
+
+				[UIView animateWithDuration:(arg2 ? 0.25 : 0.0) animations:^{
+					((SBIconView *)icon).transform = CGAffineTransformTranslate(((SBIconView *)icon).transform, 0, yOffset);
+				} completion:nil];
+			}
+		}
+	}
+	%orig(arg1, arg2);
 }
 %end
 
@@ -331,6 +382,15 @@ UIPanGestureRecognizer *pan = nil;
 	return result * [SCPreferences sharedInstance].landscapeScale;
 }
 
+-(CGAffineTransform)_transformForIndex:(NSUInteger)arg1 progressPresented:(CGFloat)arg2 scrollProgress:(CGFloat)arg3 {
+	CGAffineTransform result = %orig(arg1, arg2, arg3);
+	if (arg2 == 0.0 || !shouldDisplayTweakCC)
+		return result;
+	if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+		return CGAffineTransformTranslate(result, 0, screenSize.height * [SCPreferences sharedInstance].portraitOffset);
+	return CGAffineTransformTranslate(result, 0, screenSize.width * [SCPreferences sharedInstance].landscapeOffset);
+}
+
 %new
 -(void)animateAppearance {
 	shouldHideTweakCC = YES;
@@ -408,8 +468,8 @@ UIPanGestureRecognizer *pan = nil;
 	} completion:nil];*/
 
 	[UIView animateWithDuration:[SCPreferences sharedInstance].animationSpeed animations:^{
-		bottomBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, topBackgroundView.frame.size.height);
-		topBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, -MIN(bottomBackgroundView.frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight));
+		bottomBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, MIN(bottomBackgroundView.frame.size.height, UIInterfaceOrientationIsPortrait(sessionOrientation) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight));
+		topBackgroundView.transform = CGAffineTransformMakeTranslation(0.0, -topBackgroundView.frame.size.height);
 	} completion:^(BOOL finished){
 		if (finished) {
 			hideIfNeeded();

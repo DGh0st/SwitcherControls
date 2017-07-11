@@ -98,6 +98,8 @@
 	_portraitBottomHeight = [prefs objectForKey:@"portraitBottomHeight"] ? [[prefs objectForKey:@"portraitBottomHeight"] floatValue] : 98;
 	_landscapeBottomHeight = [prefs objectForKey:@"landscapeBottomHeight"] ? [[prefs objectForKey:@"landscapeBottomHeight"] floatValue] : 98;
 	_multiSliderBackgroundAlpha = [prefs objectForKey:@"multiSliderBackgroundAlpha"] ? [[prefs objectForKey:@"multiSliderBackgroundAlpha"] floatValue] : 0.06;
+	_portraitOffset = ([prefs objectForKey:@"portraitOffset"] ? [[prefs objectForKey:@"portraitOffset"] floatValue] : 0.5) - 0.5;
+	_landscapeOffset  = ([prefs objectForKey:@"landscapeOffset"] ? [[prefs objectForKey:@"landscapeOffset"] floatValue] : 0.5) - 0.5;
 }
 
 -(void)updateSectionPreferences {

@@ -33,6 +33,8 @@ typedef enum {
 @property (nonatomic, assign, readonly) BOOL isInteractiveCCEnabled;
 @property (nonatomic, assign, readonly) CGFloat multiSliderBackgroundAlpha;
 @property (nonatomic, assign, readonly) BOOL isScaleIconLabelsEnabled;
+@property (nonatomic, assign, readonly) CGFloat portraitOffset;
+@property (nonatomic, assign, readonly) CGFloat landscapeOffset;
 @property (nonatomic, assign) BOOL requiresRelayout;
 +(SCPreferences *)sharedInstance;
 -(void)updatePreferences;
@@ -386,5 +388,10 @@ typedef enum {
 @interface CS3DSwitcherViewController : UIViewController
 @end
 
+@interface CS3DSwitcherPageView : UIView
+@end
+
 @interface CS3DSwitcherPageScrollView : UIScrollView
+// iconView property of type UIView * which contains an SBIconView as subview
+// pageView property of type CS3DSwitcherPageView * which contains UIView * of snapshot
 @end
