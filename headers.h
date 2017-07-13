@@ -385,13 +385,14 @@ typedef enum {
 @interface SBIconView : UIView
 @end
 
-@interface CS3DSwitcherViewController : UIViewController
-@end
-
-@interface CS3DSwitcherPageView : UIView
-@end
-
 @interface CS3DSwitcherPageScrollView : UIScrollView
 // iconView property of type UIView * which contains an SBIconView as subview
 // pageView property of type CS3DSwitcherPageView * which contains UIView * of snapshot
+@end
+
+@interface CS3DSwitcherViewController : UIViewController
+-(CGRect)frameForViewAtIndex:(NSInteger)arg1;
+@end
+
+@interface CS3DSwitcherPageView : UIView
 @end

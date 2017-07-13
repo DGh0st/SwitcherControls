@@ -204,30 +204,29 @@ void relayoutViewsIfNeeded() {
 %hook CS3DSwitcherViewController
 -(CS3DSwitcherPageScrollView *)createViewAtIndex:(NSInteger)arg1 {
 	CS3DSwitcherPageScrollView *result = %orig(arg1);
-	if (shouldDisplayTweakCC) {
-		CS3DSwitcherPageView *pageView = MSHookIvar<CS3DSwitcherPageView *>(result, "_pageView");
-		if (pageView != nil) {
-			CGFloat yOffset = 0;
-			if (UIInterfaceOrientationIsPortrait(sessionOrientation))
-				yOffset += screenSize.height * [SCPreferences sharedInstance].portraitOffset;
-			else
-				yOffset += screenSize.width * [SCPreferences sharedInstance].landscapeOffset;
-			[UIView animateWithDuration:0.25 animations:^{
-				pageView.transform = CGAffineTransformTranslate(pageView.transform, 0, yOffset);
-			} completion:nil];
-		}
+	if (shouldDisplayTweakCC && result != nil) {
+		CGRect resultFrame = result.frame;
+		if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+			resultFrame.origin.y = [self frameForViewAtIndex:arg1].origin.y + screenSize.height * [SCPreferences sharedInstance].portraitOffset;
+		else
+			resultFrame.origin.y = [self frameForViewAtIndex:arg1].origin.y + screenSize.width * [SCPreferences sharedInstance].landscapeOffset;
+
+		[UIView animateWithDuration:0.25 animations:^{
+			result.frame = resultFrame;
+		} completion:nil];
 
 		UIView *iconView = MSHookIvar<UIView *>(result, "_iconView");
 		if (iconView != nil && [[iconView subviews] count] > 0) {
 			id icon = [[iconView subviews] objectAtIndex:0];
 			if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
-				CGFloat yOffset = 0;
+				CGRect iconViewFrame = iconView.frame;
 				if (UIInterfaceOrientationIsPortrait(sessionOrientation))
-					yOffset -= ([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
+					iconViewFrame.origin.y -= ([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
 				else
-					yOffset -= ([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
+					iconViewFrame.origin.y -= ([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
+
 				[UIView animateWithDuration:0.25 animations:^{
-					((SBIconView *)icon).transform = CGAffineTransformTranslate(((SBIconView *)icon).transform, 0, yOffset);
+					iconView.frame = iconViewFrame;
 				} completion:nil];
 			}
 		}
@@ -236,39 +235,35 @@ void relayoutViewsIfNeeded() {
 }
 
 -(void)dismissToIndex:(NSInteger)arg1 animated:(BOOL)arg2 {
+	%orig(arg1, arg2);
+
 	NSMutableArray *_pageViews = MSHookIvar<NSMutableArray *>(self, "_pageViews");
-	CS3DSwitcherPageScrollView *pageScrollView = [_pageViews objectAtIndex:arg1];
-	if (shouldDisplayTweakCC && pageScrollView != nil) {
-		CS3DSwitcherPageView *pageView = MSHookIvar<CS3DSwitcherPageView *>(pageScrollView, "_pageView");
-		if (pageView != nil) {
-			CGFloat yOffset = 0;
-			if (UIInterfaceOrientationIsPortrait(sessionOrientation))
-				yOffset -= screenSize.height * [SCPreferences sharedInstance].portraitOffset;
-			else
-				yOffset -= screenSize.width * [SCPreferences sharedInstance].landscapeOffset;
-
-			[UIView animateWithDuration:(arg2 ? 0.25 : 0.0) animations:^{
-				pageView.transform = CGAffineTransformTranslate(pageView.transform, 0, yOffset);
+	if ([_pageViews objectAtIndex:arg1] != [NSNull null]) {
+		CS3DSwitcherPageScrollView *pageScrollView = [_pageViews objectAtIndex:arg1];
+		if (shouldDisplayTweakCC && pageScrollView != nil) {
+			CGRect resultFrame = pageScrollView.frame;
+			resultFrame.origin.y = [self frameForViewAtIndex:arg1].origin.y;
+			[UIView animateWithDuration:0.25 animations:^{
+				pageScrollView.frame = resultFrame;
 			} completion:nil];
-		}
 
-		UIView *iconView = MSHookIvar<UIView *>(pageScrollView, "_iconView");
-		if (iconView != nil && [[iconView subviews] count] > 0) {
-			id icon = [[iconView subviews] objectAtIndex:0];
-			if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
-				CGFloat yOffset = 0;
-				if (UIInterfaceOrientationIsPortrait(sessionOrientation))
-					yOffset += ([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
-				else
-					yOffset += ([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
+			UIView *iconView = MSHookIvar<UIView *>(pageScrollView, "_iconView");
+			if (iconView != nil && [[iconView subviews] count] > 0) {
+				id icon = [[iconView subviews] objectAtIndex:0];
+				if (icon != nil && [[icon class] isEqual:%c(SBIconView)]) {
+					CGRect iconViewFrame = iconView.frame;
+					if (UIInterfaceOrientationIsPortrait(sessionOrientation))
+						iconViewFrame.origin.y += ([SCPreferences sharedInstance].portraitScale - 0.5) / 0.4 * screenSize.height;
+					else
+						iconViewFrame.origin.y += ([SCPreferences sharedInstance].landscapeScale - 0.5) / 0.4 * screenSize.width;
 
-				[UIView animateWithDuration:(arg2 ? 0.25 : 0.0) animations:^{
-					((SBIconView *)icon).transform = CGAffineTransformTranslate(((SBIconView *)icon).transform, 0, yOffset);
-				} completion:nil];
+					[UIView animateWithDuration:(arg2 ? 0.25 : 0.0) animations:^{
+						iconView.frame = iconViewFrame;
+					} completion:nil];
+				}
 			}
 		}
 	}
-	%orig(arg1, arg2);
 }
 %end
 
