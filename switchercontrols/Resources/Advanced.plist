@@ -178,8 +178,6 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
-			<key>footerText</key>
-			<string>Display media page on playing</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -217,6 +215,20 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<string>com.dgh0st.switchercontrols</string>
 			<key>PostNotification</key>
 			<string>com.dgh0st.switchercontrols/settingschanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.dgh0st.switchercontrols</string>
+			<key>key</key>
+			<string>isRemoveMediaAndDevicesPagesEnabled</string>
+			<key>label</key>
+			<string>Disable Media/Devices Pages</string>
+			<key>PostNotification</key>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>

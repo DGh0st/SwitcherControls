@@ -156,7 +156,7 @@
 		[iconView release];
 		[bundle release];
 
-		self.allSections = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", @"Settings Toggles", @"Brightness Slider", @"NightShift And AirPlay/Drop", @"Volume Slider", @"Multi Slider", nil];
+		self.allSections = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", @"Settings Toggles", @"Brightness Slider", @"NightShift And AirPlay/Drop", @"AirPlay/Drop", @"Multi Slider", @"NightShift", @"Volume Slider", nil];
 	}
 
 	return self;
@@ -352,7 +352,7 @@
 		self.topSection = [NSMutableArray arrayWithObjects:@"Quick Launch Shortcuts", nil];
 		self.bottomStickySection = [NSMutableArray arrayWithObjects:@"Settings Toggles", nil];
 		self.bottomSections = [NSMutableArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil];
-		self.hiddenSections = [NSMutableArray arrayWithObjects:@"Volume Slider", @"Multi Slider", nil];
+		self.hiddenSections = [NSMutableArray arrayWithObjects:@"AirPlay/Drop", @"Multi Slider", @"NightShift", @"Volume Slider", nil];
 		//[self writeSectionsToFile];
 	}
 

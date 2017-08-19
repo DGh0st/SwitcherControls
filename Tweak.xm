@@ -403,10 +403,15 @@ UIPanGestureRecognizer *pan = nil;
 		bottomScrollView = bottomScrollViewLandscape;
 	}
 
-	if ([SCPreferences sharedInstance].isMediaPageOnPlayingEnabled && [[%c(SBMediaController) sharedInstance] isPlaying]) {
+	BOOL isPlaying = [[%c(SBMediaController) sharedInstance] isPlaying];
+	if ([SCPreferences sharedInstance].isMediaPageOnPlayingEnabled && isPlaying) {
+		[bottomScrollViewPortrait resetupScrollWidth:YES];
+		[bottomScrollViewLandscape resetupScrollWidth:YES];
 		[bottomScrollViewPortrait scrollToPage:[bottomScrollView mediaPage] animated:NO];
 		[bottomScrollViewLandscape scrollToPage:[bottomScrollView mediaPage] animated:NO];
 	} else if ([bottomScrollView defaultPage] >= 0) {
+		[bottomScrollViewPortrait resetupScrollWidth:NO];
+		[bottomScrollViewLandscape resetupScrollWidth:NO];
 		[bottomScrollViewPortrait scrollToPage:[bottomScrollView defaultPage] animated:NO];
 		[bottomScrollViewLandscape scrollToPage:[bottomScrollView defaultPage] animated:NO];
 	}
@@ -471,6 +476,8 @@ UIPanGestureRecognizer *pan = nil;
 
 			[bottomScrollViewPortrait scrollToPage:[bottomScrollView currentVisiblePage] animated:NO];
 			[bottomScrollViewLandscape scrollToPage:[bottomScrollView currentVisiblePage] animated:NO];
+			[bottomScrollViewPortrait resetupScrollWidth:NO];
+			[bottomScrollViewLandscape resetupScrollWidth:NO];
 		}
 	}];
 }

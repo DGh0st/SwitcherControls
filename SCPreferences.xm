@@ -65,6 +65,9 @@
 	_landscapeScale = [prefs objectForKey:@"landscapeScale"] ? [[prefs objectForKey:@"landscapeScale"] floatValue] : 0.60;
 	_isInteractiveCCEnabled = [prefs objectForKey:@"isInteractiveCCEnabled"] ? [[prefs objectForKey:@"isInteractiveCCEnabled"] boolValue] : NO;
 	_isScaleIconLabelsEnabled = [prefs objectForKey:@"isScaleIconLabelsEnabled"] ? [[prefs objectForKey:@"isScaleIconLabelsEnabled"] boolValue] : YES;
+
+	if (_isRemoveMediaAndDevicesPagesEnabled && (_defaultPage == 1 || _defaultPage == 2))
+		_defaultPage = -1;
 }
 
 -(void)updateLayoutChangePreferences {
@@ -91,6 +94,7 @@
 	_requiresRelayout = YES;
 	_blurStyle = [prefs objectForKey:@"blurStyle"] ? [[prefs objectForKey:@"blurStyle"] intValue] : 2020;
 	_backgroundGrayness = [prefs objectForKey:@"backgroundGrayness"] ? [[prefs objectForKey:@"backgroundGrayness"] floatValue] : 0.0;
+	_isRemoveMediaAndDevicesPagesEnabled = [prefs objectForKey:@"isRemoveMediaAndDevicesPagesEnabled"] ? [[prefs objectForKey:@"isRemoveMediaAndDevicesPagesEnabled"] boolValue] : NO;
 	_isPortraitNightAndAirLabelsHidden = [prefs objectForKey:@"isPortraitNightAndAirLabelsHidden"] ? [[prefs objectForKey:@"isPortraitNightAndAirLabelsHidden"] boolValue] : NO;
 	_isLandscapeNightAndAirLabelsHidden = [prefs objectForKey:@"isLandscapeNightAndAirLabelsHidden"] ? [[prefs objectForKey:@"isLandscapeNightAndAirLabelsHidden"] boolValue] : NO;
 	_portraitTopHeight = [prefs objectForKey:@"portraitTopHeight"] ? [[prefs objectForKey:@"portraitTopHeight"] floatValue] : 98;
@@ -100,6 +104,9 @@
 	_multiSliderBackgroundAlpha = [prefs objectForKey:@"multiSliderBackgroundAlpha"] ? [[prefs objectForKey:@"multiSliderBackgroundAlpha"] floatValue] : 0.06;
 	_portraitOffset = ([prefs objectForKey:@"portraitOffset"] ? [[prefs objectForKey:@"portraitOffset"] floatValue] : 0.5) - 0.5;
 	_landscapeOffset  = ([prefs objectForKey:@"landscapeOffset"] ? [[prefs objectForKey:@"landscapeOffset"] floatValue] : 0.5) - 0.5;
+
+	if (_isRemoveMediaAndDevicesPagesEnabled && (_defaultPage == 1 || _defaultPage == 2))
+		_defaultPage = -1;
 }
 
 -(void)updateSectionPreferences {
@@ -171,6 +178,10 @@
 		return [ControlCenterNightAndAirPlaySectionView class];
 	else if ([section isEqualToString:@"Multi Slider"])
 		return [ControlCenterBrightnessVolumeSectionView class];
+	else if ([section isEqualToString:@"NightShift"])
+		return [ControlCenterNightSectionView class];
+	else if ([section isEqualToString:@"AirPlay/Drop"])
+		return [ControlCenterAirPlaySectionView class];
 	else
 		return [ControlCenterFailureSectionClass class];
 }

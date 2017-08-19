@@ -17,6 +17,7 @@ typedef enum {
 @property (nonatomic, assign, readonly) CGFloat animationSpeed;
 @property (nonatomic, assign, readonly) CGFloat backgroundGrayness;
 @property (nonatomic, assign, readonly) NSInteger defaultPage;
+@property (nonatomic, assign, readonly) BOOL isRemoveMediaAndDevicesPagesEnabled;
 @property (nonatomic, assign, readonly) BOOL isMediaPageOnPlayingEnabled;
 @property (nonatomic, assign, readonly) CGFloat portraitScale;
 @property (nonatomic, assign, readonly) CGFloat landscapeScale;
@@ -46,6 +47,7 @@ typedef enum {
 @end
 
 @interface ControlCenterBottomScrollView : UIScrollView
+-(void)resetupScrollWidth:(BOOL)playing;
 -(void)scrollToPage:(NSInteger)page animated:(BOOL)animated;
 -(NSInteger)currentVisiblePage;
 -(NSInteger)mediaPage;
@@ -197,6 +199,16 @@ typedef enum {
 	CCUIAirStuffSectionController *_airPlayController;
 	LQDNightSectionController *_noctisController;
 	OGYNightSectionController *_ogygiaController;
+}
+@end
+
+@interface ControlCenterNightSectionView : ControlCenterSectionView {
+	CCUINightShiftSectionController *_nightShiftController;
+}
+@end
+
+@interface ControlCenterAirPlaySectionView : ControlCenterSectionView {
+	CCUIAirStuffSectionController *_airPlayController;
 }
 @end
 

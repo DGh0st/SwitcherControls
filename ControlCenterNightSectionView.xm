@@ -1,0 +1,51 @@
+#import "headers.h"
+
+@implementation ControlCenterNightSectionView
+-(id)initWithFrame:(CGRect)frame {
+	frame = CGRectMake(frame.origin.x + 20, frame.origin.y, frame.size.width - 40, frame.size.height);
+	self = [super initWithFrame:frame];
+	if (self != nil) {
+		_nightShiftController = [[objc_getClass("CCUINightShiftSectionController") alloc] init];
+		[_nightShiftController setDelegate:self];
+		[_nightShiftController view].frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+		[self addSubview:[_nightShiftController view]];
+	}
+	return self;
+}
+
+-(void)dealloc {
+	[_nightShiftController release];
+	[super dealloc];
+}
+@end
+
+
+%hook CCUIControlCenterButton
+-(void)layoutSubviews {
+	%orig();
+	
+	if ([self superview] != nil && ([[[self superview] class] isEqual:[ControlCenterNightSectionView class]] || ([[self superview] superview] != nil && [[[[self superview] superview] class] isEqual:[ControlCenterNightSectionView class]]))) {
+		if (UIInterfaceOrientationIsPortrait([[%c(SpringBoard) sharedApplication] activeInterfaceOrientation])) {
+			if ([SCPreferences sharedInstance].isPortraitNightAndAirLabelsHidden) {
+				UIView *parent = [self superview];
+				if ([[parent class] isEqual:[ControlCenterNightSectionView class]] || [[[parent superview] class] isEqual:[ControlCenterNightSectionView class]]) {
+					[(UILabel *)[self valueForKey:@"_label"] setHidden:YES];
+					[(UILabel *)[self valueForKey:@"_alteredStateLabel"] setHidden:YES];
+					((UIImageView *)[self valueForKey:@"_glyphImageView"]).center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+					((UIImageView *)[self valueForKey:@"_alteredStateGlyphImageView"]).center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+				}
+			}
+		} else {
+			if ([SCPreferences sharedInstance].isLandscapeNightAndAirLabelsHidden) {
+				UIView *parent = [self superview];
+				if ([[parent class] isEqual:[ControlCenterNightSectionView class]] || [[[parent superview] class] isEqual:[ControlCenterNightSectionView class]]) {
+					[(UILabel *)[self valueForKey:@"_label"] setHidden:YES];
+					[(UILabel *)[self valueForKey:@"_alteredStateLabel"] setHidden:YES];
+					((UIImageView *)[self valueForKey:@"_glyphImageView"]).center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+					((UIImageView *)[self valueForKey:@"_alteredStateGlyphImageView"]).center = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+				}
+			}
+		}
+	}
+}
+%end
