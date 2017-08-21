@@ -2,6 +2,8 @@
 
 @implementation ControlCenterBrightnessVolumeSectionView
 -(id)initWithFrame:(CGRect)frame {
+	if ([SCPreferences sharedInstance].isCompactSlidersEnabled)
+		frame.size.height = 32;
 	self = [super initWithFrame:frame];
 	if (self != nil) {
 		if (%c(CCXMultiSliderSectionController)) { // horseshoe fix (any horseshoe class would work actually)

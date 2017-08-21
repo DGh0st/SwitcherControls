@@ -173,7 +173,7 @@
 		case 1:
 			return @"Bottom Sticky Section (Two - 1 section allowed)";
 		case 2:
-			return @"Bottom Sections (Three - 3 section allowed)";
+			return @"Bottom Sections (Three - 4 section allowed)";
 		case 3:
 			return @"Hidden Sections";
 		default:
@@ -248,7 +248,7 @@
 	if (toArray == self.topSection || toArray == self.bottomStickySection)
 		i = 1;
 	else if (toArray == self.bottomSections)
-		i = 3;
+		i = 4;
 	for (; i < [toArray count]; i++) {
 		NSString *objectToHide = [toArray objectAtIndex:i];
 		[self.hiddenSections insertObject:objectToHide atIndex:0];

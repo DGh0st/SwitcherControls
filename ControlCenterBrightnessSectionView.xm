@@ -2,6 +2,8 @@
 
 @implementation ControlCenterBrightnessSectionView
 -(id)initWithFrame:(CGRect)frame {
+	if ([SCPreferences sharedInstance].isCompactSlidersEnabled)
+		frame.size.height = 32;
 	frame.origin.x += 4;
 	self = [super initWithFrame:frame];
 	if (self != nil) {

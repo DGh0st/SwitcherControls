@@ -234,6 +234,20 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.dgh0st.switchercontrols</string>
+			<key>key</key>
+			<string>isRemoveDevicesPagesEnabled</string>
+			<key>label</key>
+			<string>Disable Devices Page</string>
+			<key>PostNotification</key>
+			<string>com.dgh0st.switchercontrols/relayoutPreferencesChanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
 			<true/>
 			<key>defaults</key>
 			<string>com.dgh0st.switchercontrols</string>
@@ -346,7 +360,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>min</key>
 			<real>90</real>
 			<key>max</key>
-			<real>326</real>
+			<real>374</real>
 			<key>showValue</key>
 			<true/>
 			<key>default</key>
@@ -374,7 +388,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 			<key>min</key>
 			<real>90</real>
 			<key>max</key>
-			<real>326</real>
+			<real>374</real>
 			<key>showValue</key>
 			<true/>
 			<key>default</key>
@@ -491,6 +505,24 @@ If 3DSwitcher 2 is enabled, then this will move the icons up vertically.</string
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.dgh0st.switchercontrols</string>
+			<key>key</key>
+			<string>isCompactSlidersEnabled</string>
+			<key>label</key>
+			<string>Enable Compact Sliders</string>
+			<key>PostNotification</key>
+			<string>com.dgh0st.switchercontrols/settingschanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Portrait Card Offset</string>
 		</dict>
@@ -500,7 +532,7 @@ If 3DSwitcher 2 is enabled, then this will move the icons up vertically.</string
 			<key>cellClass</key>
 			<string>SCCSliderCell</string>
 			<key>min</key>
-			<real>0.0</real>
+			<real>-0.25</real>
 			<key>max</key>
 			<real>1.0</real>
 			<key>showValue</key>
@@ -526,7 +558,7 @@ If 3DSwitcher 2 is enabled, then this will move the icons up vertically.</string
 			<key>cellClass</key>
 			<string>SCCSliderCell</string>
 			<key>min</key>
-			<real>0.0</real>
+			<real>-0.25</real>
 			<key>max</key>
 			<real>1.0</real>
 			<key>showValue</key>

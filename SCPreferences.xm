@@ -68,6 +68,8 @@
 
 	if (_isRemoveMediaAndDevicesPagesEnabled && (_defaultPage == 1 || _defaultPage == 2))
 		_defaultPage = -1;
+	else if (_isRemoveDevicesPagesEnabled && _defaultPage == 2)
+		_defaultPage = -1;
 }
 
 -(void)updateLayoutChangePreferences {
@@ -95,6 +97,7 @@
 	_blurStyle = [prefs objectForKey:@"blurStyle"] ? [[prefs objectForKey:@"blurStyle"] intValue] : 2020;
 	_backgroundGrayness = [prefs objectForKey:@"backgroundGrayness"] ? [[prefs objectForKey:@"backgroundGrayness"] floatValue] : 0.0;
 	_isRemoveMediaAndDevicesPagesEnabled = [prefs objectForKey:@"isRemoveMediaAndDevicesPagesEnabled"] ? [[prefs objectForKey:@"isRemoveMediaAndDevicesPagesEnabled"] boolValue] : NO;
+	_isRemoveDevicesPagesEnabled = [prefs objectForKey:@"isRemoveDevicesPagesEnabled"] ? [[prefs objectForKey:@"isRemoveDevicesPagesEnabled"] boolValue] : NO;
 	_isPortraitNightAndAirLabelsHidden = [prefs objectForKey:@"isPortraitNightAndAirLabelsHidden"] ? [[prefs objectForKey:@"isPortraitNightAndAirLabelsHidden"] boolValue] : NO;
 	_isLandscapeNightAndAirLabelsHidden = [prefs objectForKey:@"isLandscapeNightAndAirLabelsHidden"] ? [[prefs objectForKey:@"isLandscapeNightAndAirLabelsHidden"] boolValue] : NO;
 	_portraitTopHeight = [prefs objectForKey:@"portraitTopHeight"] ? [[prefs objectForKey:@"portraitTopHeight"] floatValue] : 98;
@@ -102,10 +105,13 @@
 	_portraitBottomHeight = [prefs objectForKey:@"portraitBottomHeight"] ? [[prefs objectForKey:@"portraitBottomHeight"] floatValue] : 98;
 	_landscapeBottomHeight = [prefs objectForKey:@"landscapeBottomHeight"] ? [[prefs objectForKey:@"landscapeBottomHeight"] floatValue] : 98;
 	_multiSliderBackgroundAlpha = [prefs objectForKey:@"multiSliderBackgroundAlpha"] ? [[prefs objectForKey:@"multiSliderBackgroundAlpha"] floatValue] : 0.06;
+	_isCompactSlidersEnabled = [prefs objectForKey:@"isCompactSlidersEnabled"] ? [[prefs objectForKey:@"isCompactSlidersEnabled"] boolValue] : NO;
 	_portraitOffset = ([prefs objectForKey:@"portraitOffset"] ? [[prefs objectForKey:@"portraitOffset"] floatValue] : 0.5) - 0.5;
 	_landscapeOffset  = ([prefs objectForKey:@"landscapeOffset"] ? [[prefs objectForKey:@"landscapeOffset"] floatValue] : 0.5) - 0.5;
 
 	if (_isRemoveMediaAndDevicesPagesEnabled && (_defaultPage == 1 || _defaultPage == 2))
+		_defaultPage = -1;
+	else if (_isRemoveDevicesPagesEnabled && _defaultPage == 2)
 		_defaultPage = -1;
 }
 
@@ -198,7 +204,7 @@
 			return [ControlCenterFailureSectionClass class];
 		return [self classForSection:[_bottomStickySection objectAtIndex:0]];
 	} else if (position == kBottom) {
-		if (_bottomSection != nil && [_bottomSection count] <= index)
+		if (_bottomSection != nil && ([_bottomSection count] <= index || [_bottomSection count] == 0))
 			return [ControlCenterFailureSectionClass class];
 		return [self classForSection:[_bottomSection objectAtIndex:index]];
 	}

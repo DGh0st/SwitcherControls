@@ -2,6 +2,8 @@
 
 @implementation ControlCenterVolumeSectionView
 -(id)initWithFrame:(CGRect)frame {
+	if ([SCPreferences sharedInstance].isCompactSlidersEnabled)
+		frame.size.height = 32;
 	self = [super initWithFrame:frame];
 	if (self != nil) {
 		volumeView = [[objc_getClass("MPUMediaControlsVolumeView") alloc] initWithStyle:4];

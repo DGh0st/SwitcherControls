@@ -18,6 +18,7 @@ typedef enum {
 @property (nonatomic, assign, readonly) CGFloat backgroundGrayness;
 @property (nonatomic, assign, readonly) NSInteger defaultPage;
 @property (nonatomic, assign, readonly) BOOL isRemoveMediaAndDevicesPagesEnabled;
+@property (nonatomic, assign, readonly) BOOL isRemoveDevicesPagesEnabled;
 @property (nonatomic, assign, readonly) BOOL isMediaPageOnPlayingEnabled;
 @property (nonatomic, assign, readonly) CGFloat portraitScale;
 @property (nonatomic, assign, readonly) CGFloat landscapeScale;
@@ -32,8 +33,9 @@ typedef enum {
 @property (nonatomic, assign, readonly) NSArray *bottomStickySection;
 @property (nonatomic, assign, readonly) NSArray *bottomSection;
 @property (nonatomic, assign, readonly) BOOL isInteractiveCCEnabled;
-@property (nonatomic, assign, readonly) CGFloat multiSliderBackgroundAlpha;
 @property (nonatomic, assign, readonly) BOOL isScaleIconLabelsEnabled;
+@property (nonatomic, assign, readonly) CGFloat multiSliderBackgroundAlpha;
+@property (nonatomic, assign, readonly) BOOL isCompactSlidersEnabled;
 @property (nonatomic, assign, readonly) CGFloat portraitOffset;
 @property (nonatomic, assign, readonly) CGFloat landscapeOffset;
 @property (nonatomic, assign) BOOL requiresRelayout;
@@ -266,6 +268,9 @@ typedef enum {
 @end
 
 @interface MPUMediaControlsVolumeView : UIView
+@end
+
+@interface MPAVRoutingViewController : UIViewController
 @end
 
 @interface MPUControlCenterMediaControlsView : UIView

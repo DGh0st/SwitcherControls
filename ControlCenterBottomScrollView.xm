@@ -14,7 +14,8 @@
 		NSInteger totalSections = 0;
 		CGFloat currentOriginY = 0;
 		if ([SCPreferences sharedInstance].bottomSection != nil) {
-			for (NSInteger i = 0; i < [[SCPreferences sharedInstance].bottomSection count]; i++) {
+			NSInteger totalBottomSections = [[SCPreferences sharedInstance].bottomSection count];
+			for (NSInteger i = 0; i < totalBottomSections; i++) {
 				Class currentClass = [[SCPreferences sharedInstance] sectionClass:kBottom withIndex:i];
 				if (currentClass != [ControlCenterFailureSectionClass class]) {
 					totalSections++;
@@ -65,12 +66,13 @@
 
 -(void)resetupScrollWidth:(BOOL)playing {
 	CGFloat scrollWidth = 0;
+	BOOL removeDevicesPage = [SCPreferences sharedInstance].isRemoveDevicesPagesEnabled;
 	if (playing)
-		scrollWidth = self.frame.size.width * 3;
+		scrollWidth = self.frame.size.width * (removeDevicesPage ? 2 : 3);
 	else if ([SCPreferences sharedInstance].isRemoveMediaAndDevicesPagesEnabled)
 		scrollWidth = self.frame.size.width;
 	else
-		scrollWidth = self.frame.size.width * 3;
+		scrollWidth = self.frame.size.width * (removeDevicesPage ? 2 : 3);
 	self.contentSize = CGSizeMake(scrollWidth, self.frame.size.height);
 }
 

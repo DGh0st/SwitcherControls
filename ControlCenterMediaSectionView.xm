@@ -9,7 +9,7 @@
 		[mediaViewController _initControlCenterMediaControlsViewController];
 		[mediaViewController setDelegate:self];
 		MPUControlCenterMediaControlsView *controlsView = [mediaViewController _mediaControlsView];
-		controlsView.frame = CGRectMake(0, 0, frame.size.width * 2 + 10, frame.size.height);
+		controlsView.frame = CGRectMake(-5, 0, frame.size.width * 2 + 20, frame.size.height);
 		[controlsView setLayoutStyle:1];
 
 		[self setLayoutInterpolatorWithValues:20 secondValue:20 firstMetric:300 secondMetric:360 forKey:@"_marginLayoutInterpolator"];
@@ -25,6 +25,10 @@
 		[_transportControlsWidthCompactLayoutInterpolator addValue:MAX(frame.size.width / 3, 152) forReferenceMetric:360];
 		[controlsView setValue:_transportControlsWidthCompactLayoutInterpolator forKey:@"_transportControlsWidthCompactLayoutInterpolator"];
 		[_transportControlsWidthCompactLayoutInterpolator release];
+
+		// hide routing view (devices page) if needed
+		MPAVRoutingViewController *_routingViewController = [mediaViewController valueForKey:@"_routingViewController"];
+		_routingViewController.view.hidden = [SCPreferences sharedInstance].isRemoveDevicesPagesEnabled;
 
 		[self addSubview:controlsView];
 	}

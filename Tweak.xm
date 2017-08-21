@@ -47,6 +47,11 @@ void setupViewsForSize(CGSize size) {
 		CGRect frame = bottomBackgroundView.frame;
 		frame.size.height += 74;
 		bottomBackgroundView.frame = frame;
+	} else if (numberOfSections == 4) {
+		bottomScrollViewFrame.size.height = 300;
+		CGRect frame = bottomBackgroundView.frame;
+		frame.size.height += 148;
+		bottomBackgroundView.frame = frame;
 	}
 
 	UIView *bottomGrabberView = [[UIView alloc] initWithFrame:bottomGrabberViewFrame];
@@ -62,8 +67,9 @@ void setupViewsForSize(CGSize size) {
 	if (![topClass isEqual:[ControlCenterFailureSectionClass class]]) {
 		ControlCenterSectionView *topSection = [[topClass alloc] initWithFrame:topSectionViewFrame];
 
+		CGFloat additionalHeight = (topSection.frame.size.height - topSectionViewFrame.size.height);
 		CGRect frame = topBackgroundView.frame;
-		frame.size.height += (topSection.frame.size.height - topSectionViewFrame.size.height);
+		frame.size.height += additionalHeight;
 		topBackgroundView.frame = frame;
 
 		topSection.center = CGPointMake(topBackgroundView.frame.size.width / 2, topBackgroundView.frame.size.height / 2);
@@ -99,8 +105,9 @@ void setupViewsForSize(CGSize size) {
 
 	bottomScrollView = [[ControlCenterBottomScrollView alloc] initWithFrame:bottomScrollViewFrame];
 
+	CGFloat additionalHeight = (bottomScrollView.frame.size.height - bottomScrollViewFrame.size.height);
 	CGRect frame = bottomBackgroundView.frame;
-	frame.size.height += (bottomScrollView.frame.size.height - bottomScrollViewFrame.size.height);
+	frame.size.height += additionalHeight;
 	frame.origin.y = size.height - MIN(frame.size.height, (size.height > size.width) ? [SCPreferences sharedInstance].portraitBottomHeight : [SCPreferences sharedInstance].landscapeBottomHeight);
 	bottomBackgroundView.frame = frame;
 
