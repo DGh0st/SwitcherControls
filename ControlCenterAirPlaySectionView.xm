@@ -9,6 +9,11 @@
 		[_airPlayController setDelegate:self];
 		_airPlayController.view.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
 		[self addSubview:[_airPlayController view]];
+
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+			UIAlertController *_airDropAlertController = (UIAlertController *)[_airPlayController valueForKey:@"_airDropAlertController"];
+			[_airDropAlertController setPreferredStyle:UIAlertControllerStyleAlert];
+		}
 	}
 	return self;
 }

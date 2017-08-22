@@ -9,7 +9,7 @@
 		[mediaViewController _initControlCenterMediaControlsViewController];
 		[mediaViewController setDelegate:self];
 		MPUControlCenterMediaControlsView *controlsView = [mediaViewController _mediaControlsView];
-		controlsView.frame = CGRectMake(-5, 0, frame.size.width * 2 + 20, frame.size.height);
+		controlsView.frame = CGRectMake(-2, 0, frame.size.width * 2 + 15, frame.size.height);
 		[controlsView setLayoutStyle:1];
 
 		[self setLayoutInterpolatorWithValues:20 secondValue:20 firstMetric:300 secondMetric:360 forKey:@"_marginLayoutInterpolator"];

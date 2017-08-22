@@ -22,6 +22,8 @@
 		_bottomSection = [NSArray arrayWithObjects:@"Brightness Slider", @"NightShift And AirPlay/Drop", nil];
 
 		[self updatePreferences];
+		[self updateSectionPreferences];
+		[self updateLayoutChangePreferences];
 	}
 	return self;
 }
@@ -193,8 +195,6 @@
 }
 
 -(Class)sectionClass:(SectionPosition)position withIndex:(NSInteger)index {
-	[self updatePreferences];
-
 	if (position == kTop) {
 		if (_topSection != nil && [_topSection count] == 0)
 			return [ControlCenterFailureSectionClass class];

@@ -149,7 +149,7 @@ Interactive CC will display bottom section height based on swipe height (Bit Bug
 					<string>Dark Low</string>
 				</array>
 			<key>default</key>
-			<integer>2010</integer>
+			<integer>2020</integer>
 			<key>defaults</key>
 			<string>com.dgh0st.switchercontrols</string>
 			<key>PostNotification</key>
